@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "httpPort": 8008,
+      "useSSL": true,
+      "sslPort": 8009
+    }
+  }
+}
