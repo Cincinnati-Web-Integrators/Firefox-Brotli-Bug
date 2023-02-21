@@ -28,11 +28,6 @@ namespace API
                 await GET_BROTLI_FILE(context, CompressionLevel.Fastest);
             });
 
-            app.MapGet("/gzip-small", async (HttpContext context) =>
-            {
-                await GET_GZIP_FILE(context, CompressionLevel.SmallestSize);
-            });
-
             app.MapGet("/", () => {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("<html>");
@@ -40,10 +35,6 @@ namespace API
                 sb.AppendLine("<script type=\"module\">");
                 sb.AppendLine("{");
                 sb.AppendLine($"let request = await fetch(\"{api_url}/br-fast\");");
-                sb.AppendLine("let response = await request.text();");
-                sb.AppendLine("}");
-                sb.AppendLine("{");
-                sb.AppendLine($"let request = await fetch(\"{api_url}/gzip-small\");");
                 sb.AppendLine("let response = await request.text();");
                 sb.AppendLine("}");
                 sb.AppendLine("{");
@@ -67,19 +58,6 @@ namespace API
             context.Response.StatusCode = 200;
 
             var compression_stream = new BrotliStream(context.Response.Body, compression_level, true);
-            await compression_stream.WriteAsync(bytes);
-            await compression_stream.FlushAsync();
-            await context.Response.Body.FlushAsync();
-        }
-
-        public static async Task GET_GZIP_FILE(HttpContext context, CompressionLevel compression_level)
-        {
-            var bytes = await File.ReadAllBytesAsync("test.txt");
-
-            context.Response.Headers.Add("Content-Encoding", "gzip");
-            context.Response.StatusCode = 200;
-
-            var compression_stream = new GZipStream(context.Response.Body, compression_level, true);
             await compression_stream.WriteAsync(bytes);
             await compression_stream.FlushAsync();
             await context.Response.Body.FlushAsync();
